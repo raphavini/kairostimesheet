@@ -49,6 +49,7 @@ export interface User {
   name: string;
   role: string;
   avatar: string;
+  two_factor_enabled?: boolean;
 }
 
 // New Types for Audit Logs

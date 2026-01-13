@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { MOCK_USER } from "../constants";
+import { useAuth } from "../context/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -28,6 +30,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: "Audit Logs", path: "/audit-logs", icon: "fact_check" },
     { name: "Settings", path: "/settings", icon: "settings" },
   ];
+
+  if (!user) return <>{children}</>; // Fallback if wrapping fails
 
   return (
     <div className="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
@@ -68,14 +72,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="p-6 border-t border-slate-200 dark:border-border-dark">
           <div className="flex items-center gap-3">
              <img 
-               src={MOCK_USER.avatar} 
+               src={user.avatar || "https://i.pravatar.cc/150"} 
                alt="User" 
                className="size-9 rounded-full bg-slate-200 border-2 border-slate-100 dark:border-slate-700" 
              />
              <div className="flex-1 min-w-0">
-               <p className="text-sm font-bold truncate">{MOCK_USER.name}</p>
-               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{MOCK_USER.role}</p>
+               <p className="text-sm font-bold truncate">{user.name}</p>
+               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.role}</p>
              </div>
+             <button onClick={logout} className="text-slate-400 hover:text-red-500 transition-colors" title="Logout">
+                <span className="material-symbols-outlined text-xl">logout</span>
+             </button>
           </div>
         </div>
       </aside>
