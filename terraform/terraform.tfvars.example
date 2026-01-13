@@ -1,0 +1,35 @@
+# Exemplo de arquivo de variáveis para a aplicação Timesheet
+# Copie este arquivo para terraform.tfvars e preencha com suas credenciais
+
+# Endereço do servidor FTP da Hostgator
+# Exemplo: ftp.seudominio.com.br ou IP do servidor
+ftp_host = "ftp.seudominio.com.br"
+
+# Porta FTP (padrão é 21)
+ftp_port = 21
+
+# Usuário FTP fornecido pela Hostgator
+ftp_username = "seu_usuario_ftp"
+
+# Senha FTP
+ftp_password = "sua_senha_ftp"
+
+# Caminhos locais
+# Frontend (após build, será ../dist)
+local_files_path = "../dist"
+
+# Backend (API em PHP)
+local_backend_path = "../api"
+
+# Caminhos remotos no servidor FTP
+# Frontend vai para /kairosheet
+remote_path_frontend = "/kairosheet"
+
+# Backend vai para /kairosheet_api
+remote_path_backend = "/kairosheet_api"
+
+# Configurações de SSH
+ssh_host     = "50.116.86.19"
+ssh_port     = 2222
+ssh_user     = "raph7664"
+ssh_key_path = "~/.ssh/hostgator_terraform"
