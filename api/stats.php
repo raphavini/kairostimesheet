@@ -14,21 +14,47 @@ $pdo = getDbConnection();
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stats = [];
 
-    // Total Active Contracts
-    $stmt = $pdo->query("SELECT COUNT(*) as count FROM contracts WHERE status = 'Active'");
-    $stats['activeContracts'] = $stmt->fetch()['count'];
+    // Monthly Data (Last 6 months)
+    $monthlyData = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $monthStr = date('Y-m', strtotime("-$i months"));
+        $monthName = date('M', strtotime("-$i months"));
 
-    // Total Hours Logged (This Month)
-    $startOfMonth = date('Y-m-01');
-    $endOfMonth = date('Y-m-t');
-    $stmt = $pdo->prepare("SELECT SUM(hours) as total_hours FROM work_logs WHERE date BETWEEN ? AND ?");
-    $stmt->execute([$startOfMonth, $endOfMonth]);
-    $stats['hoursLoggedMonth'] = $stmt->fetch()['total_hours'] ?? 0;
+        $stmt = $pdo->prepare("SELECT SUM(hours) as consumed FROM work_logs WHERE date LIKE ?");
+        $stmt->execute(["$monthStr%"]);
+        $consumed = $stmt->fetch()['consumed'] ?? 0;
 
-    // Remaining Hours (Across all active contracts)
-    // This is a bit tricky, but let's sum (total - used) for active contracts
-    $stmt = $pdo->query("SELECT SUM(total_hours - used_hours) as remaining FROM contracts WHERE status = 'Active'");
-    $stats['remainingHours'] = $stmt->fetch()['remaining'] ?? 0;
+        // Mock budget for now or calculate based on contracts active in that period
+        $budget = 100 + (rand(0, 50));
+
+        $monthlyData[] = [
+            'name' => $monthName,
+            'consumed' => (float) $consumed,
+            'budget' => (float) $budget
+        ];
+    }
+    $stats['monthlyData'] = $monthlyData;
+
+    // Contract Health (Top 5 active)
+    $contractHealth = [];
+    $stmt = $pdo->query("SELECT name, (used_hours / total_hours * 100) as value FROM contracts WHERE total_hours > 0 ORDER BY value DESC LIMIT 5");
+    $healthData = $stmt->fetchAll();
+
+    foreach ($healthData as $row) {
+        $val = (float) $row['value'];
+        $color = '#135bec'; // Default blue
+        if ($val > 90)
+            $color = '#ef4444'; // Red
+        else if ($val > 75)
+            $color = '#f59e0b'; // Amber
+
+        $contractHealth[] = [
+            'name' => $row['name'],
+            'value' => round($val, 1),
+            'color' => $color
+        ];
+    }
+    $stats['contractHealth'] = $contractHealth;
 
     echo json_encode($stats);
 } else {

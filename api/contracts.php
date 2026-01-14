@@ -14,7 +14,22 @@ $pdo = getDbConnection();
 
 switch ($method) {
     case 'GET':
-        $stmt = $pdo->query("SELECT * FROM contracts ORDER BY created_at DESC");
+        $sql = "SELECT 
+                    c.id, 
+                    c.client_id as clientId, 
+                    c.name, 
+                    c.total_hours as totalHours, 
+                    c.used_hours as usedHours, 
+                    c.hourly_rate as hourlyRate, 
+                    c.start_date as startDate, 
+                    c.end_date as endDate, 
+                    c.status,
+                    cl.name as clientName,
+                    cl.logo as clientLogo
+                FROM contracts c
+                JOIN clients cl ON c.client_id = cl.id
+                ORDER BY c.created_at DESC";
+        $stmt = $pdo->query($sql);
         echo json_encode($stmt->fetchAll());
         break;
 

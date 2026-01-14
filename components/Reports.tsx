@@ -8,17 +8,28 @@ export const Reports: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.getLogs(), api.getProjects()])
       .then(([logsData, projectsData]) => {
+        if (!Array.isArray(logsData) || !Array.isArray(projectsData)) {
+          throw new Error("Invalid data format received from server");
+        }
         setLogs(logsData);
         setProjects(projectsData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load report data", err);
+        setError(err.message);
         setLoading(false);
       });
   }, []);
 
-  if (loading || !Array.isArray(logs) || !Array.isArray(projects)) return <div className="p-8">Loading reports...</div>;
+  if (loading) return <div className="p-8 text-center text-slate-500">Loading reports...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (!Array.isArray(logs) || !Array.isArray(projects)) return <div className="p-8 text-center text-slate-500">No data available for reports.</div>;
 
   // Aggregate hours by project
   const projectDistribution = projects.map(project => {

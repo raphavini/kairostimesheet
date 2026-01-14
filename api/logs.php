@@ -22,7 +22,16 @@ switch ($method) {
             exit;
         }
 
-        $sql = "SELECT wl.*, p.name as project_name, u.name as user_name 
+        $sql = "SELECT 
+                    wl.id, 
+                    wl.project_id as projectId, 
+                    wl.user_id as userId, 
+                    wl.date, 
+                    wl.hours, 
+                    wl.description, 
+                    wl.type,
+                    p.name as projectName, 
+                    u.name as userName 
                 FROM work_logs wl
                 JOIN projects p ON wl.project_id = p.id
                 JOIN users u ON wl.user_id = u.id
