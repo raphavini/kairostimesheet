@@ -29,7 +29,7 @@ remote_path_frontend = "/kairosheet"
 remote_path_backend = "/kairosheet_api"
 
 # Configurações de SSH
-ssh_host     = "50.116.86.19"
-ssh_port     = 2222
-ssh_user     = "raph7664"
+ssh_host     = ""
+ssh_port     = 
+ssh_user     = ""
 ssh_key_path = "~/.ssh/hostgator_terraform"

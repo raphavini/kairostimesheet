@@ -2,9 +2,9 @@
 
 // Database Configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'raph7664_timesheet');
-define('DB_USER', 'raph7664_timesheet');
-define('DB_PASS', 'lkBDkairos9#!');
+define('DB_NAME', '');
+define('DB_USER', '');
+define('DB_PASS', '');
 
 // CORS Settings
 header("Access-Control-Allow-Origin: *");
