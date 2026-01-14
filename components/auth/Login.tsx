@@ -126,7 +126,7 @@ export const Login: React.FC = () => {
             <SocialButton
               provider="Apple"
               label="Apple"
-              icon="https://www.svgrepo.com/show/445136/apple.svg"
+              icon="https://ligadokodigo.com.br/images/apple_ios.svg"
             />
             <SocialButton
               provider="GitHub"

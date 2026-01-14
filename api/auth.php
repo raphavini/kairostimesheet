@@ -34,7 +34,11 @@ switch ($action) {
             if ($user && password_verify($password, $user['password_hash'])) {
                 $_SESSION['user_id'] = $user['id'];
                 unset($user['password_hash']);
-                echo json_encode(['user' => $user]);
+                echo json_encode([
+                    'status' => 'success',
+                    'user' => $user,
+                    'token' => session_id() // Use session ID as a dummy token for now
+                ]);
             } else {
                 http_response_code(401);
                 echo json_encode(['error' => 'Invalid credentials']);
