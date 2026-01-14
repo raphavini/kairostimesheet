@@ -19,7 +19,7 @@ export const Login: React.FC = () => {
 
     try {
       const res = await authApi.login(email, password);
-      
+
       if (res.status === "success") {
         login(res.user, res.token);
         navigate("/");
@@ -30,6 +30,7 @@ export const Login: React.FC = () => {
         setError(res.error || "Login failed");
       }
     } catch (err) {
+      console.error("Login Error:", err);
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -65,7 +66,7 @@ export const Login: React.FC = () => {
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-1.5">
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Email</label>
               <input
@@ -81,7 +82,7 @@ export const Login: React.FC = () => {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
-                <Link to="/auth/forgot-password" class="text-xs text-primary font-bold hover:underline">Forgot password?</Link>
+                <Link to="/auth/forgot-password" className="text-xs text-primary font-bold hover:underline">Forgot password?</Link>
               </div>
               <input
                 type="password"
@@ -112,26 +113,26 @@ export const Login: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-             <SocialButton 
-                provider="Google" 
-                label="Google" 
-                icon="https://www.svgrepo.com/show/475656/google-color.svg" 
-             />
-             <SocialButton 
-                provider="Microsoft" 
-                label="Microsoft" 
-                icon="https://www.svgrepo.com/show/452062/microsoft.svg" 
-             />
-             <SocialButton 
-                provider="Apple" 
-                label="Apple" 
-                icon="https://www.svgrepo.com/show/445136/apple.svg" 
-             />
-             <SocialButton 
-                provider="GitHub" 
-                label="GitHub" 
-                icon="https://www.svgrepo.com/show/512317/github-142.svg" 
-             />
+            <SocialButton
+              provider="Google"
+              label="Google"
+              icon="https://www.svgrepo.com/show/475656/google-color.svg"
+            />
+            <SocialButton
+              provider="Microsoft"
+              label="Microsoft"
+              icon="https://www.svgrepo.com/show/452062/microsoft.svg"
+            />
+            <SocialButton
+              provider="Apple"
+              label="Apple"
+              icon="https://www.svgrepo.com/show/445136/apple.svg"
+            />
+            <SocialButton
+              provider="GitHub"
+              label="GitHub"
+              icon="https://www.svgrepo.com/show/512317/github-142.svg"
+            />
           </div>
         </div>
       </div>

@@ -12,4 +12,4 @@ fi
 echo "🔗 Conectando ao servidor via SSH (Porta $SSH_PORT) em $SSH_USER@$SSH_HOST..."
 
 # Executa o script remoto
-ssh -i "$SSH_KEY" -p "$SSH_PORT" -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "bash ~/ligadokodigo.com.br/deploy/deploy.sh"
+ssh -i "$SSH_KEY" -p "$SSH_PORT" -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "bash ~/ligadokodigo.com.br/deploy/deploy_timesheet.sh"

@@ -4,31 +4,31 @@
 set -e
 
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
-BLOG_DIR=~/ideia2all.com.br/blog
-DEPLOY_DIR=~/ligadokodigo.com.br/deploy/ideia2all
-BACKUP_DIR=~/ideia2all.com.br
+APP_DIR=~/ligadokodigo.com.br/timesheet
+DEPLOY_DIR=~/ligadokodigo.com.br/deploy/timesheet
+BACKUP_DIR=~/ligadokodigo.com.br
 
 echo "--- Iniciando script de deploy remoto ---"
 
 # 1. Comprimir o conteúdo atual
-if [ -d "$BLOG_DIR" ]; then
-    echo "📦 Backup: Comprimindo $BLOG_DIR para blog_$TIMESTAMP.zip..."
+if [ -d "APP_DIR" ]; then
+    echo "📦 Backup: Comprimindo APP_DIR para timesheet_$TIMESTAMP.zip..."
     cd $BACKUP_DIR
-    zip -r "blog_$TIMESTAMP.zip" "blog" -x "blog_$TIMESTAMP.zip"
+    zip -r "timesheet_$TIMESTAMP.zip" "timesheet" -x "timesheet_$TIMESTAMP.zip"
 else
-    echo "⚠️ Aviso: Diretório $BLOG_DIR não encontrado para backup."
+    echo "⚠️ Aviso: Diretório $APP_DIR não encontrado para backup."
 fi
 
 # 2. Remover conteúdo atual
-echo "🗑️ Removendo conteúdo de $BLOG_DIR/*..."
+echo "🗑️ Removendo conteúdo de APP_DIR/*..."
 # Usamos -f para não falhar se estiver vazio, e garantimos que o diretório exista
-mkdir -p "$BLOG_DIR"
-rm -rf "$BLOG_DIR"/*
+mkdir -p "$APP_DIR"
+rm -rf "$APP_DIR"/*
 
 # 3. Mover conteúdo enviado
 if [ -d "$DEPLOY_DIR" ] && [ "$(ls -A $DEPLOY_DIR)" ]; then
     echo "🚚 Movendo conteúdo de $DEPLOY_DIR para $BLOG_DIR..."
-    mv "$DEPLOY_DIR"/* "$BLOG_DIR"/
+    mv "$DEPLOY_DIR"/* "$APP_DIR"/
 else
     echo "❌ Erro: Conteúdo de deploy não encontrado em $DEPLOY_DIR"
     exit 1
