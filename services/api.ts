@@ -1,7 +1,7 @@
 
 // Base API URL - change this if your PHP server runs elsewhere
 // const API_BASE = 'http://localhost:8000/api';
-const API_BASE = '/api';
+const API_BASE = 'api';
 
 export const api = {
     async getContracts() {
