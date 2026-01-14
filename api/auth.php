@@ -4,9 +4,13 @@ require_once 'db.php';
 session_start();
 
 $method = $_SERVER['REQUEST_METHOD'];
-$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '');
-$request = explode('/', trim($path_info, '/'));
-$action = array_shift($request);
+$action = $_GET['action'] ?? null;
+
+if (!$action) {
+    $path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '');
+    $request = explode('/', trim($path_info, '/'));
+    $action = array_shift($request);
+}
 
 $pdo = getDbConnection();
 
