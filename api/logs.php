@@ -58,10 +58,42 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents('php://input'), true);
-        if (empty($data['project_id']) || empty($data['date']) || empty($data['hours']) || empty($data['type'])) {
+        if ((empty($data['project_id']) && empty($data['projectName'])) || empty($data['date']) || empty($data['hours']) || empty($data['type'])) {
             http_response_code(400);
-            echo json_encode(['error' => 'Missing required fields']);
+            echo json_encode(['error' => 'Missing required fields (project_id/projectName, date, hours, type)']);
             exit;
+        }
+
+        $projectId = $data['project_id'] ?? null;
+        if (!$projectId && !empty($data['projectName'])) {
+            // Find project by name
+            $stmtP = $pdo->prepare("SELECT id FROM projects WHERE name = ?");
+            $stmtP->execute([$data['projectName']]);
+            $existingProject = $stmtP->fetch();
+
+            if ($existingProject) {
+                $projectId = $existingProject['id'];
+            } else {
+                // Create new project
+                // First find an active contract or the latest contract
+                $stmtC = $pdo->query("SELECT id FROM contracts WHERE status = 'Active' ORDER BY created_at DESC LIMIT 1");
+                $contract = $stmtC->fetch();
+
+                if (!$contract) {
+                    $stmtC = $pdo->query("SELECT id FROM contracts ORDER BY created_at DESC LIMIT 1");
+                    $contract = $stmtC->fetch();
+                }
+
+                if (!$contract) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'No active or existing contracts found to assign new project to.']);
+                    exit;
+                }
+
+                $projectId = uniqid();
+                $stmtNewP = $pdo->prepare("INSERT INTO projects (id, contract_id, name) VALUES (?, ?, ?)");
+                $stmtNewP->execute([$projectId, $contract['id'], $data['projectName']]);
+            }
         }
 
         $id = uniqid();
@@ -77,12 +109,12 @@ switch ($method) {
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("INSERT INTO work_logs (id, project_id, user_id, date, hours, description, type) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$id, $data['project_id'], $userId, $data['date'], $data['hours'], $description, $data['type']]);
+            $stmt->execute([$id, $projectId, $userId, $data['date'], $data['hours'], $description, $data['type']]);
 
             // Calculate hours to add to contract
             // Get contract ID from project
             $stmtC = $pdo->prepare("SELECT contract_id FROM projects WHERE id = ?");
-            $stmtC->execute([$data['project_id']]);
+            $stmtC->execute([$projectId]);
             $project = $stmtC->fetch();
 
             if ($project) {

@@ -8,7 +8,7 @@ export const TimeTracker: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // Form State
-  const [projectId, setProjectId] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [hours, setHours] = useState("");
   const [description, setDescription] = useState("");
   const [logType, setLogType] = useState<LogType>(LogType.Evolutivo);
@@ -24,10 +24,8 @@ export const TimeTracker: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!projectId || !hours || !description) return;
-
     const newLog = {
-      projectId,
+      projectName,
       userId: "u1", // Hardcoded user for demo
       date: new Date().toISOString().split('T')[0],
       hours: parseFloat(hours),
@@ -42,6 +40,7 @@ export const TimeTracker: React.FC = () => {
       setLogs(updatedLogs);
 
       // Reset
+      setProjectName("");
       setHours("");
       setDescription("");
     } catch (err) {
@@ -91,16 +90,19 @@ export const TimeTracker: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-600 dark:text-slate-300">Project</label>
-                  <select
-                    value={projectId}
-                    onChange={(e) => setProjectId(e.target.value)}
+                  <input
+                    type="text"
+                    list="project-suggestions"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
                     className="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none transition-shadow"
-                  >
-                    <option value="">Select a project</option>
+                    placeholder="Enter or select project"
+                  />
+                  <datalist id="project-suggestions">
                     {Array.isArray(projects) && projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
+                      <option key={p.id} value={p.name} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-600 dark:text-slate-300">Duration (Hours)</label>
@@ -127,8 +129,8 @@ export const TimeTracker: React.FC = () => {
                       type="button"
                       onClick={() => setLogType(type)}
                       className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${logType === type
-                          ? "border-primary bg-primary/5 text-primary"
-                          : "border-transparent bg-slate-50 dark:bg-background-dark text-slate-500 hover:bg-slate-100"
+                        ? "border-primary bg-primary/5 text-primary"
+                        : "border-transparent bg-slate-50 dark:bg-background-dark text-slate-500 hover:bg-slate-100"
                         }`}
                     >
                       <span className="text-xs font-bold">{type}</span>
