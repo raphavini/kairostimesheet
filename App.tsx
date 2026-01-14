@@ -15,7 +15,16 @@ import { ResetPassword } from "./components/auth/ResetPassword";
 import { TwoFactor } from "./components/auth/TwoFactor";
 
 const PrivateRoute = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
   return isAuthenticated ? <Layout><Outlet /></Layout> : <Navigate to="/auth/login" replace />;
 };
 
@@ -39,7 +48,7 @@ const App: React.FC = () => {
             <Route path="audit-logs" element={<AuditLogs />} />
             <Route path="settings" element={<Settings />} />
           </Route>
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
