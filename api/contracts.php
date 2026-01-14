@@ -20,12 +20,30 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents('php://input'), true);
-        // Validation could be more robust
+
+        // Resolve client_id from client_name if provided
+        if (!empty($data['client_name'])) {
+            $stmt = $pdo->prepare("SELECT id FROM clients WHERE name = ?");
+            $stmt->execute([$data['client_name']]);
+            $client = $stmt->fetch();
+
+            if ($client) {
+                $data['client_id'] = $client['id'];
+            } else {
+                // Create new client
+                $client_id = uniqid();
+                $stmt = $pdo->prepare("INSERT INTO clients (id, name) VALUES (?, ?)");
+                $stmt->execute([$client_id, $data['client_name']]);
+                $data['client_id'] = $client_id;
+            }
+        }
+
+        // Validation
         $required = ['client_id', 'name', 'total_hours', 'hourly_rate', 'start_date', 'end_date'];
         foreach ($required as $field) {
             if (empty($data[$field])) {
                 http_response_code(400);
-                echo json_encode(['error' => "Field $field is required"]);
+                echo json_encode(['error' => "Field $field is required (or client_name)"]);
                 exit;
             }
         }
@@ -48,7 +66,7 @@ switch ($method) {
                 $status
             ]);
             http_response_code(201);
-            echo json_encode(['id' => $id, 'message' => 'Contract created']);
+            echo json_encode(['id' => $id, 'message' => 'Contract created', 'client_id' => $data['client_id']]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Failed to create contract: ' . $e->getMessage()]);

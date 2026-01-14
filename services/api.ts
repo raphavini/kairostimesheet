@@ -9,6 +9,20 @@ export const api = {
         return res.json();
     },
 
+    async createContract(data: any) {
+        const res = await fetch(`${API_BASE}/contracts.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    async getClients() {
+        const res = await fetch(`${API_BASE}/clients.php`);
+        return res.json();
+    },
+
     async getDashboardStats() {
         const res = await fetch(`${API_BASE}/stats.php`);
         return res.json();
