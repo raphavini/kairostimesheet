@@ -107,6 +107,45 @@ switch ($action) {
         }
         break;
 
+    case 'change-password':
+        if ($method === 'POST') {
+            if (!isset($_SESSION['user_id'])) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Not authenticated']);
+                exit;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+            $currentPassword = $data['currentPassword'] ?? '';
+            $newPassword = $data['newPassword'] ?? '';
+
+            if (empty($currentPassword) || empty($newPassword)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Current and new password are required']);
+                exit;
+            }
+
+            // Verify current password
+            $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
+            $stmt->execute([$_SESSION['user_id']]);
+            $user = $stmt->fetch();
+
+            if ($user && password_verify($currentPassword, $user['password_hash'])) {
+                $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
+                if ($updateStmt->execute([$newPasswordHash, $_SESSION['user_id']])) {
+                    echo json_encode(['status' => 'success', 'message' => 'Password updated successfully']);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Failed to update password']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid current password']);
+            }
+        }
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Endpoint not found']);
