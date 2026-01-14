@@ -62,7 +62,7 @@ export const Contracts: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-border-dark text-sm">
-              {contracts.map((contract) => {
+              {Array.isArray(contracts) && contracts.map((contract) => {
                 const consumptionPercent = Math.round((contract.usedHours / contract.totalHours) * 100);
                 let progressBarColor = "bg-primary";
                 if (consumptionPercent > 90) progressBarColor = "bg-red-500";
@@ -110,7 +110,7 @@ export const Contracts: React.FC = () => {
 
         {/* Pagination */}
         <div className="px-6 py-4 border-t border-slate-200 dark:border-border-dark flex items-center justify-between">
-          <p className="text-xs text-slate-500">Showing {contracts.length} records</p>
+          <p className="text-xs text-slate-500">Showing {Array.isArray(contracts) ? contracts.length : 0} records</p>
           <div className="flex gap-2">
             <button className="px-3 py-1 border border-slate-200 dark:border-border-dark rounded text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">Prev</button>
             <button className="px-3 py-1 border border-slate-200 dark:border-border-dark rounded text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">Next</button>
