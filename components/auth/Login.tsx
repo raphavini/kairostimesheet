@@ -11,6 +11,42 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [isIframe] = useState(window.self !== window.top);
+
+  React.useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      // Security: You might want to validate event.origin here
+      if (event.data && event.data.type === "LK_OS_AUTH_RESPONSE") {
+        if (event.data.status === "approved") {
+          setLoading(true);
+          try {
+            const res = await authApi.ssoLogin(event.data.user, event.data.token);
+            if (res.status === "success") {
+              login(res.user, res.token);
+              navigate("/");
+            } else {
+              setError(res.error || "SSO Login failed");
+            }
+          } catch (err) {
+            console.error("SSO Login Error:", err);
+            setError("Failed to login with LK OS");
+          } finally {
+            setLoading(false);
+          }
+        } else if (event.data.status === "denied") {
+          setError("Acesso negado pelo usuário.");
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [login, navigate]);
+
+  const handleLkOsLogin = () => {
+    setError("");
+    window.parent.postMessage({ type: "LK_OS_AUTH_REQUEST" }, "*");
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +95,27 @@ export const Login: React.FC = () => {
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Welcome back</h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sign in to your account to continue</p>
           </div>
+
+          {isIframe && (
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={handleLkOsLogin}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2"
+              >
+                Entrar com LK OS
+              </button>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200 dark:border-border-dark"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white dark:bg-surface-dark px-2 text-slate-500 font-bold">Ou use seu e-mail</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (

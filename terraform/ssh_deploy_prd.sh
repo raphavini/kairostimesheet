@@ -1,8 +1,8 @@
 #!/bin/bash
-SSH_HOST="[IP_ADDRESS]"
-SSH_PORT=""
-SSH_USER=""
-SSH_KEY=""
+SSH_HOST="50.116.86.19"
+SSH_PORT="2222"
+SSH_USER="raph7664"
+SSH_KEY="~/.ssh/hostgator_terraform"
 
 if [ -z "$SSH_HOST" ] || [ -z "$SSH_PORT" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ]; then
     echo "Erro: Parâmetros insuficientes para o script ssh_deploy.sh"

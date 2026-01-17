@@ -46,6 +46,30 @@ switch ($action) {
         }
         break;
 
+    case 'sso-login':
+        if ($method === 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $user = $data['user'] ?? null;
+            $token = $data['token'] ?? '';
+
+            if (!$user || empty($token)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'User data and token are required']);
+                exit;
+            }
+
+            // For now, we trust the SSO data from LK OS
+            // In a real environment, we would verify the token with LK OS API
+            $_SESSION['user_id'] = $user['id'] ?? ($user['uuid'] ?? null);
+
+            echo json_encode([
+                'status' => 'success',
+                'user' => $user,
+                'token' => session_id()
+            ]);
+        }
+        break;
+
     case 'logout':
         if ($method === 'POST') {
             session_destroy();

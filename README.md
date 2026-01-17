@@ -39,6 +39,8 @@ kairostimesheet/
 - **📂 Relatórios**: Geração de relatórios detalhados para análise de produtividade.
 - **🛡️ Logs de Auditoria**: Rastreabilidade total de alterações no sistema.
 - **🔐 Autenticação**: Sistema seguro de login e gestão de permissões.
+- **🔗 Integração LK OS (SSO)**: Login automático quando aberto dentro do ecossistema LK OS via `postMessage`.
+
 
 ## 🛠️ Rodando Localmente
 

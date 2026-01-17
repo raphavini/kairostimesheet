@@ -46,5 +46,14 @@ export const authApi = {
             body: JSON.stringify({ userId, currentPassword, newPassword })
         });
         return res.json();
+    },
+
+    async ssoLogin(user, token) {
+        const res = await fetch(`${API_BASE}/auth.php?action=sso-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user, token })
+        });
+        return res.json();
     }
 };
