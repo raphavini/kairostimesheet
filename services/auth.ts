@@ -1,6 +1,6 @@
 
 // const API_BASE = 'http://localhost:8000/api';
-const API_BASE = '/timesheet/api';
+const API_BASE = 'api';
 
 export const authApi = {
     async login(email, password) {
